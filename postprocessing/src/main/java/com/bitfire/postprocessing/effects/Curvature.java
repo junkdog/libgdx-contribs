@@ -20,10 +20,22 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.filters.RadialDistortion;
 
-public final class Curvature extends PostProcessorEffect {
+public final class Curvature extends PostProcessorEffect<Curvature.Settings> {
+	public static class Settings implements EffectSettings {
+		public float zoom;
+		public float distortion;
+	}
 	private RadialDistortion distort;
 
 	public Curvature() {
+		super( new Settings() );
+		distort = new RadialDistortion();
+		settings.distortion = distort.getDistortion();
+		settings.zoom = distort.getZoom();
+	}
+	
+	public Curvature( Settings settings ) {
+		super( settings );
 		distort = new RadialDistortion();
 	}
 
@@ -34,10 +46,12 @@ public final class Curvature extends PostProcessorEffect {
 
 	public void setDistortion( float distortion ) {
 		distort.setDistortion( distortion );
+		settings.distortion = distortion;
 	}
 
 	public void setZoom( float zoom ) {
 		distort.setZoom( zoom );
+		settings.zoom = zoom;
 	}
 
 	public float getDistortion() {
@@ -57,6 +71,11 @@ public final class Curvature extends PostProcessorEffect {
 	public void render( FrameBuffer src, FrameBuffer dest ) {
 		restoreViewport( dest );
 		distort.setInput( src ).setOutput( dest ).render();
-	};
+	}
 
+	@Override
+	public void refreshSettings() {
+		distort.setDistortion( settings.distortion );
+		distort.setZoom( settings.zoom );
+	};
 }
