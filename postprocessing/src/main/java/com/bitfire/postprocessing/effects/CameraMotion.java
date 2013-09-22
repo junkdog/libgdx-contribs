@@ -27,12 +27,31 @@ import com.bitfire.postprocessing.filters.CameraBlur;
  * 
  * @author bmanuel
  */
-public final class CameraMotion extends PostProcessorEffect {
+public final class CameraMotion extends PostProcessorEffect<CameraMotion.Settings> {
+	public static class Settings implements EffectSettings {
+		public int blurPasses;
+		public float blurScale;
+		public float near, far;
+		public float depthScale;
+		
+		public int initWidth, initHeight;
+	}
+
 	private CameraBlur camblur;
 	private Matrix4 ctp = new Matrix4();
 	private float width, height;
 
 	public CameraMotion( int width, int height ) {
+		super(new Settings());
+		init( width, height );
+	}
+	
+	public CameraMotion( Settings settings ) {
+		super( settings );
+		init( settings.initWidth, settings.initHeight );
+	}
+
+	private void init( int width, int height ) {
 		this.width = width;
 		this.height = height;
 		camblur = new CameraBlur();
@@ -56,18 +75,23 @@ public final class CameraMotion extends PostProcessorEffect {
 
 	public void setBlurPasses( int passes ) {
 		camblur.setBlurPasses( passes );
+		settings.blurPasses = passes;
 	}
 
 	public void setBlurScale( float scale ) {
 		camblur.setBlurScale( scale );
+		settings.blurScale = scale;
 	}
 
 	public void setNearFar( float near, float far ) {
 		camblur.setNearFarPlanes( near, far );
+		settings.near = near;
+		settings.far = far;
 	}
 
 	public void setDepthScale( float scale ) {
 		camblur.setDepthScale( scale );
+		settings.depthScale = scale;
 	}
 
 	@Override
@@ -85,5 +109,12 @@ public final class CameraMotion extends PostProcessorEffect {
 
 		restoreViewport( dest );
 		camblur.setInput( src ).setOutput( dest ).render();
-	};
+	}
+
+	@Override
+	public void refreshSettings() {
+		camblur.setBlurPasses( settings.blurPasses );
+		camblur.setBlurScale( settings.blurScale );
+		camblur.setDepthScale( settings.depthScale );
+	}
 }

@@ -18,6 +18,7 @@ package com.bitfire.postprocessing;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.postprocessing.effects.EffectSettings;
 
 /**
  * This interface defines the base class for the concrete implementation
@@ -26,8 +27,18 @@ import com.badlogic.gdx.utils.Disposable;
  * 
  * @author bmanuel
  */
-public abstract class PostProcessorEffect implements Disposable {
+/**
+ * @author junkdog
+ *
+ * @param <T>
+ */
+public abstract class PostProcessorEffect<T extends EffectSettings> implements Disposable {
 	protected boolean enabled = true;
+	protected T settings;
+	
+	public PostProcessorEffect( T settings ) {
+		this.settings = settings;
+	}
 
 	/**
 	 * Concrete objects shall be responsible to recreate or rebind its own
@@ -58,4 +69,26 @@ public abstract class PostProcessorEffect implements Disposable {
 	protected void restoreViewport( FrameBuffer dest ) {
 		PostProcessor.restoreViewport( dest );
 	}
+	
+	/**
+	 * Updates the parameters for this shader. Implicitly calls {@link #refreshSettings()}.
+	 * 
+	 * @param settings Updated settings.
+	 */
+	public final void setSettings( T settings ) {
+		this.settings = settings;
+		refreshSettings();
+	}
+
+	/**
+	 * @return This effect's Settings object.
+	 */
+	public final T getSettings() {
+		return this.settings;
+	}
+
+	/**
+	 * Updates this shader from the locally held Settings object.
+	 */
+	public abstract void refreshSettings();
 }

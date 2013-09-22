@@ -33,7 +33,21 @@ import com.bitfire.postprocessing.filters.CrtScreen;
 import com.bitfire.postprocessing.filters.CrtScreen.RgbMode;
 import com.bitfire.postprocessing.utils.PingPongBuffer;
 
-public final class CrtMonitor extends PostProcessorEffect {
+public final class CrtMonitor extends PostProcessorEffect<CrtMonitor.Settings> {
+	public static class Settings implements EffectSettings {
+		public Color tint;
+		public float time;
+		public float colorOffset;
+		public float chromaticDispersionRedCyan;
+		public float chromaticDispersionBlueYellow;
+		public float distortion;
+		public float zoom;
+		
+		public int initWidth, initHeight;
+		public boolean initBarrelDistortion, initPerformBlur;
+		public RgbMode initMode;
+	}
+	
 	private PingPongBuffer pingPongBuffer = null;
 	private FrameBuffer buffer = null;
 	private CrtScreen crt;
@@ -46,25 +60,41 @@ public final class CrtMonitor extends PostProcessorEffect {
 
 	// the effect is designed to work on the whole screen area, no small/mid size tricks!
 	public CrtMonitor( int fboWidth, int fboHeight, boolean barrelDistortion, boolean performBlur, RgbMode mode ) {
+		super( new Settings() );
+		settings.initWidth = fboWidth;
+		settings.initHeight = fboHeight;
+		settings.initBarrelDistortion = barrelDistortion;
+		settings.initPerformBlur = performBlur;
+		settings.initMode = mode;
 		doblur = performBlur;
 
+		init();
+	}
+	
+	public CrtMonitor( Settings settings ) {
+		super( settings );
+		init();
+		refreshSettings();
+	}
+
+	private void init() {
 		if( doblur ) {
-			pingPongBuffer = PostProcessor.newPingPongBuffer( fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false );
-			blur = new Blur( fboWidth, fboHeight );
+			pingPongBuffer = PostProcessor.newPingPongBuffer( settings.initWidth, settings.initHeight, PostProcessor.getFramebufferFormat(), false );
+			blur = new Blur( settings.initWidth, settings.initHeight );
 			blur.setPasses( 1 );
 			blur.setAmount( 1f );
 			// blur.setType( BlurType.Gaussian3x3b ); // high defocus
 			blur.setType( BlurType.Gaussian3x3 ); // modern machines defocus
 		} else {
-			buffer = new FrameBuffer( PostProcessor.getFramebufferFormat(), fboWidth, fboHeight, false );
+			buffer = new FrameBuffer( PostProcessor.getFramebufferFormat(), settings.initWidth, settings.initHeight, false );
 		}
 
 		combine = new Combine();
 
-		switch( mode ) {
+		switch( settings.initMode ) {
 		case RgbShift:
-			combine.setSource1Intensity( barrelDistortion ? 0f : 0.15f );
-			combine.setSource2Intensity( barrelDistortion ? 1.2f : 1.1f );
+			combine.setSource1Intensity( settings.initBarrelDistortion ? 0f : 0.15f );
+			combine.setSource2Intensity( settings.initBarrelDistortion ? 1.2f : 1.1f );
 			combine.setSource1Saturation( 1f );
 			combine.setSource2Saturation( 0.8f );
 			break;
@@ -78,7 +108,7 @@ public final class CrtMonitor extends PostProcessorEffect {
 			throw new GdxRuntimeException( "Unsupported RGB mode" );
 		}
 
-		crt = new CrtScreen( barrelDistortion, mode );
+		crt = new CrtScreen( settings.initBarrelDistortion, settings.initMode );
 	}
 
 	@Override
@@ -111,38 +141,50 @@ public final class CrtMonitor extends PostProcessorEffect {
 	// setters
 	public void setTime( float elapsedSecs ) {
 		crt.setTime( elapsedSecs );
+		settings.time = elapsedSecs;
 	}
 
 	public void setColorOffset( float offset ) {
 		crt.setColorOffset( offset );
+		settings.colorOffset = offset;
 	}
 
 	public void setChromaticDispersion( float redCyan, float blueYellow ) {
 		crt.setChromaticDispersion( redCyan, blueYellow );
+		settings.chromaticDispersionRedCyan = redCyan;
+		settings.chromaticDispersionBlueYellow = blueYellow;
 	}
 
 	public void setChromaticDispersionRC( float redCyan ) {
 		crt.setChromaticDispersionRC( redCyan );
+		settings.chromaticDispersionRedCyan = redCyan;
 	}
 
 	public void setChromaticDispersionBY( float blueYellow ) {
 		crt.setChromaticDispersionBY( blueYellow );
+		settings.chromaticDispersionBlueYellow = blueYellow;
 	}
 
 	public void setTint( Color tint ) {
 		crt.setTint( tint );
+		settings.tint.set(tint);
 	}
 
 	public void setTint( float r, float g, float b ) {
 		crt.setTint( r, g, b );
+		settings.tint.r = r;
+		settings.tint.g = r;
+		settings.tint.b = r;
 	}
 
 	public void setDistortion( float distortion ) {
 		crt.setDistortion( distortion );
+		settings.distortion = distortion;
 	}
 
 	public void setZoom( float zoom ) {
 		crt.setZoom( zoom );
+		settings.zoom = zoom;
 	}
 
 	// getters
@@ -213,5 +255,16 @@ public final class CrtMonitor extends PostProcessorEffect {
 
 		// do combine pass
 		combine.setOutput( dest ).setInput( in, out ).render();
+	}
+
+	@Override
+	public void refreshSettings() {
+		crt.setChromaticDispersionRC( settings.chromaticDispersionRedCyan ); 
+		crt.setChromaticDispersionBY( settings.chromaticDispersionBlueYellow );
+		crt.setColorOffset( settings.colorOffset );
+		crt.setDistortion( settings.distortion );
+		crt.setTime( settings.time );
+		crt.setTint( settings.tint );
+		crt.setZoom( settings.zoom );
 	};
 }

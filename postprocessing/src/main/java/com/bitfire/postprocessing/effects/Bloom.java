@@ -28,19 +28,19 @@ import com.bitfire.postprocessing.filters.Combine;
 import com.bitfire.postprocessing.filters.Threshold;
 import com.bitfire.postprocessing.utils.PingPongBuffer;
 
-public final class Bloom extends PostProcessorEffect {
-	public static class Settings {
-		public final String name;
+public final class Bloom extends PostProcessorEffect<Bloom.Settings> {
+	public static class Settings implements EffectSettings {
+		public String name;
 
-		public final BlurType blurType;
-		public final int blurPasses; // simple blur
-		public final float blurAmount; // normal blur (1 pass)
-		public final float bloomThreshold;
+		public BlurType blurType;
+		public int blurPasses; // simple blur
+		public float blurAmount; // normal blur (1 pass)
+		public float bloomThreshold;
 
-		public final float bloomIntensity;
-		public final float bloomSaturation;
-		public final float baseIntensity;
-		public final float baseSaturation;
+		public float bloomIntensity;
+		public float bloomSaturation;
+		public float baseIntensity;
+		public float baseSaturation;
 
 		public Settings( String name, BlurType blurType, int blurPasses, float blurAmount, float bloomThreshold,
 				float baseIntensity, float baseSaturation, float bloomIntensity, float bloomSaturation ) {
@@ -75,6 +75,10 @@ public final class Bloom extends PostProcessorEffect {
 			this.bloomIntensity = other.bloomIntensity;
 			this.bloomSaturation = other.bloomSaturation;
 		}
+		
+		public Settings() {
+			this( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f );
+		}
 	}
 
 	private PingPongBuffer pingPongBuffer;
@@ -89,15 +93,25 @@ public final class Bloom extends PostProcessorEffect {
 	private int sfactor, dfactor;
 
 	public Bloom( int fboWidth, int fboHeight ) {
-		pingPongBuffer = PostProcessor.newPingPongBuffer( fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false );
+		super(new Settings());
+		init(fboWidth, fboHeight);
+	}
 
+	public Bloom( Settings settings ) {
+		super( settings );
+		init( Gdx.graphics.getWidth() / 4, Gdx.graphics.getHeight() / 4 );
+		refreshSettings();
+	}
+	
+
+	private void init( int fboWidth, int fboHeight ) {
+		pingPongBuffer = PostProcessor.newPingPongBuffer( fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false );
+		
 		blur = new Blur( fboWidth, fboHeight );
 		threshold = new Threshold();
 		combine = new Combine();
-
-		setSettings( new Settings( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f ) );
 	}
-
+	
 	@Override
 	public void dispose() {
 		combine.dispose();
@@ -108,22 +122,28 @@ public final class Bloom extends PostProcessorEffect {
 
 	public void setBaseIntesity( float intensity ) {
 		combine.setSource1Intensity( intensity );
+		settings.baseIntensity = intensity;
+		
 	}
 
 	public void setBaseSaturation( float saturation ) {
 		combine.setSource1Saturation( saturation );
+		settings.baseSaturation = saturation;
 	}
 
 	public void setBloomIntesity( float intensity ) {
 		combine.setSource2Intensity( intensity );
+		settings.bloomIntensity = intensity;
 	}
 
 	public void setBloomSaturation( float saturation ) {
 		combine.setSource2Saturation( saturation );
+		settings.bloomSaturation = saturation;
 	}
 
 	public void setThreshold( float gamma ) {
 		threshold.setTreshold( gamma );
+		settings.bloomThreshold = gamma;
 	}
 
 	public void enableBlending( int sfactor, int dfactor ) {
@@ -138,11 +158,11 @@ public final class Bloom extends PostProcessorEffect {
 
 	public void setBlurType( BlurType type ) {
 		blur.setType( type );
+		settings.blurType = type;
 	}
 
-	public void setSettings( Settings settings ) {
-		this.settings = settings;
-
+	@Override
+	public void refreshSettings() {
 		// setup threshold filter
 		setThreshold( settings.bloomThreshold );
 
@@ -160,10 +180,12 @@ public final class Bloom extends PostProcessorEffect {
 
 	public void setBlurPasses( int passes ) {
 		blur.setPasses( passes );
+		settings.blurPasses = passes;
 	}
 
 	public void setBlurAmount( float amount ) {
 		blur.setAmount( amount );
+		settings.blurAmount = amount;
 	}
 
 	public float getThreshold() {
@@ -200,10 +222,6 @@ public final class Bloom extends PostProcessorEffect {
 
 	public BlurType getBlurType() {
 		return blur.getType();
-	}
-
-	public Settings getSettings() {
-		return settings;
 	}
 
 	public int getBlurPasses() {
