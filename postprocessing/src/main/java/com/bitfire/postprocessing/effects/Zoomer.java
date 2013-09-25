@@ -20,10 +20,29 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.filters.RadialBlur;
+import com.bitfire.postprocessing.filters.RadialBlur.Quality;
 import com.bitfire.postprocessing.filters.Zoom;
 
 /** Implements a zooming effect: either a radial blur filter or a zoom filter is used. */
-public final class Zoomer extends PostProcessorEffect {
+public final class Zoomer extends PostProcessorEffect<Zoomer.Settings> {
+	public static class Settings implements EffectSettings {
+		public float originX, originY;
+		public float blurStrength;
+		public float zoom;
+		
+		public int initViewportWidth;
+		public int initViewportHeight;
+		public RadialBlur.Quality initQuality;
+		
+		public Settings( int initViewportWidth, int initViewportHeight, Quality initQuality ) {
+			this.initViewportWidth = initViewportWidth;
+			this.initViewportHeight = initViewportHeight;
+			this.initQuality = initQuality;
+		}
+		
+		public Settings() {}
+	}
+	
 	private boolean doRadial = false;
 	private RadialBlur radialBlur = null;
 	private Zoom zoom = null;
@@ -32,16 +51,24 @@ public final class Zoomer extends PostProcessorEffect {
 
 	/** Creating a Zoomer specifying the radial blur quality will enable radial blur */
 	public Zoomer( int viewportWidth, int viewportHeight, RadialBlur.Quality quality ) {
-		setup( viewportWidth, viewportHeight, new RadialBlur( quality ) );
+		this( new Settings( viewportWidth, viewportHeight, quality ) );
 	}
 
 	/** Creating a Zoomer without any parameter will use plain simple zooming */
 	public Zoomer( int viewportWidth, int viewportHeight ) {
-		setup( viewportWidth, viewportHeight, null );
+		this( new Settings( viewportWidth, viewportHeight, null ));
+	}
+	
+	public Zoomer( Settings settings ) {
+		super( settings );
+		setup( settings.initViewportWidth, settings.initViewportWidth, settings.initQuality );
 	}
 
-	private void setup( int viewportWidth, int viewportHeight, RadialBlur radialBlurFilter ) {
-		radialBlur = radialBlurFilter;
+	private void setup( int viewportWidth, int viewportHeight, Quality radialQuality ) {
+		if (radialQuality != null) {
+			radialBlur = new RadialBlur( radialQuality );
+		}
+		
 		if( radialBlur != null ) {
 			doRadial = true;
 			zoom = null;
@@ -135,5 +162,11 @@ public final class Zoomer extends PostProcessorEffect {
 		} else {
 			zoom.setInput( src ).setOutput( dest ).render();
 		}
+	}
+
+	@Override
+	public void refreshSettings() {
+		// TODO Auto-generated method stub
+		
 	}
 }
