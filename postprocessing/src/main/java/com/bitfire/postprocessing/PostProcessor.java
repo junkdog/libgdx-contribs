@@ -46,7 +46,7 @@ public final class PostProcessor implements Disposable {
 	private final PingPongBuffer composite;
 	private TextureWrap compositeWrapU;
 	private TextureWrap compositeWrapV;
-	private final ItemsManager<PostProcessorEffect> effectsManager = new ItemsManager<PostProcessorEffect>();
+	private final ItemsManager<PostProcessorEffect<?>> effectsManager = new ItemsManager<PostProcessorEffect<?>>();
 	private static final Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
 	private final Color clearColor = Color.CLEAR;
 	private int clearBits = GL10.GL_COLOR_BUFFER_BIT;
@@ -62,7 +62,7 @@ public final class PostProcessor implements Disposable {
 	private PostProcessorListener listener = null;
 
 	// maintains a per-frame updated list of enabled effects
-	private Array<PostProcessorEffect> enabledEffects = new Array<PostProcessorEffect>( 5 );
+	private Array<PostProcessorEffect<?>> enabledEffects = new Array<PostProcessorEffect<?>>( 5 );
 
 	/**
 	 * Construct a new PostProcessor with FBO dimensions set to the size of the screen
@@ -200,7 +200,7 @@ public final class PostProcessor implements Disposable {
 	public boolean isReady() {
 		boolean hasEffects = false;
 
-		for( PostProcessorEffect e : effectsManager ) {
+		for( PostProcessorEffect<?> e : effectsManager ) {
 			if( e.isEnabled() ) {
 				hasEffects = true;
 				break;
@@ -235,12 +235,12 @@ public final class PostProcessor implements Disposable {
 	 * applied in a FIFO fashion, the first added
 	 * is the first being applied.
 	 */
-	public void addEffect( PostProcessorEffect effect ) {
+	public void addEffect( PostProcessorEffect<?> effect ) {
 		effectsManager.add( effect );
 	}
 
 	/** Removes the specified effect from the effect chain. */
-	public void removeEffect( PostProcessorEffect effect ) {
+	public void removeEffect( PostProcessorEffect<?> effect ) {
 		effectsManager.remove( effect );
 	}
 
@@ -379,7 +379,7 @@ public final class PostProcessor implements Disposable {
 			buffers.get( i ).rebind();
 		}
 
-		for( PostProcessorEffect e : effectsManager ) {
+		for( PostProcessorEffect<?> e : effectsManager ) {
 			e.rebind();
 		}
 	}
@@ -397,7 +397,7 @@ public final class PostProcessor implements Disposable {
 		}
 
 		// Array<PostProcessorEffect> items = manager.items;
-		Array<PostProcessorEffect> items = enabledEffects;
+		Array<PostProcessorEffect<?>> items = enabledEffects;
 
 		int count = items.size;
 		if( count > 0 ) {
@@ -408,7 +408,7 @@ public final class PostProcessor implements Disposable {
 			// render effects chain, [0,n-1]
 			if( count > 1 ) {
 				for( int i = 0; i < count - 1; i++ ) {
-					PostProcessorEffect e = items.get( i );
+					PostProcessorEffect<?> e = items.get( i );
 
 					composite.capture();
 					{
@@ -441,7 +441,7 @@ public final class PostProcessor implements Disposable {
 
 	private int buildEnabledEffectsList() {
 		enabledEffects.clear();
-		for( PostProcessorEffect e : effectsManager ) {
+		for( PostProcessorEffect<?> e : effectsManager ) {
 			if( e.isEnabled() ) {
 				enabledEffects.add( e );
 			}
