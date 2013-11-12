@@ -9,17 +9,10 @@
 	<name>libgdx-contribs</name>
 
 	<properties>
-		<gdx.version>0.9.9-SNAPSHOT</gdx.version>
+		<gdx.version>0.9.9</gdx.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>gdx-nightlies</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		</repository>
-	</repositories>
-	
 	<modules>
 		<module>utils</module>
 		<module>postprocessing</module>
