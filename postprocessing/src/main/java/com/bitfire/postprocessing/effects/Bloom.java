@@ -29,7 +29,7 @@ import com.bitfire.postprocessing.filters.Threshold;
 import com.bitfire.postprocessing.utils.PingPongBuffer;
 
 public final class Bloom extends PostProcessorEffect<Bloom.Settings> {
-	public static class Settings implements EffectSettings {
+	public static class Settings implements EffectSettings{
 		public String name;
 
 		public BlurType blurType;
@@ -97,7 +97,7 @@ public final class Bloom extends PostProcessorEffect<Bloom.Settings> {
 
 	public Bloom( Settings settings ) {
 		super( settings );
-		init( Gdx.graphics.getWidth() / 4, Gdx.graphics.getHeight() / 4 );
+		init( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
 		refreshSettings();
 	}
 	

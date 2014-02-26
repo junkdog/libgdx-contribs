@@ -130,3 +130,4 @@ public final class Combine extends Filter<Combine> {
 		inputTexture2.bind( u_texture1 );
 	}
 }
+ 

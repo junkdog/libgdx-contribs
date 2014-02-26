@@ -27,11 +27,6 @@ import com.bitfire.postprocessing.effects.EffectSettings;
  * 
  * @author bmanuel
  */
-/**
- * @author junkdog
- *
- * @param <T>
- */
 public abstract class PostProcessorEffect<T extends EffectSettings> implements Disposable {
 	protected boolean enabled = true;
 	protected T settings;

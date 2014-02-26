@@ -27,7 +27,7 @@ import com.bitfire.postprocessing.filters.Zoom;
 public final class Zoomer extends PostProcessorEffect<Zoomer.Settings> {
 	public static class Settings implements EffectSettings {
 		public float originX, originY;
-		public float blurStrength;
+		public float blurStrength = 3.4f;
 		public float zoom;
 		
 		public int initViewportWidth;
@@ -166,7 +166,7 @@ public final class Zoomer extends PostProcessorEffect<Zoomer.Settings> {
 
 	@Override
 	public void refreshSettings() {
-		// TODO Auto-generated method stub
-		
+		setOrigin(settings.originX, settings.originY);
+		setZoom(settings.zoom);
 	}
 }
