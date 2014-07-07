@@ -14,8 +14,8 @@ public class ShaderCompileException extends RuntimeException {
 	
 	@Override
 	public String getMessage() {
-		return String.format("%s\nvertex:\n%s\nfragment:\n%s",
-				log, withLineNumbers(vertexShader), withLineNumbers(fragmentShader));
+		return String.format("vertex:\n%s\nfragment:\n%s\n%s",
+				withLineNumbers(vertexShader), withLineNumbers(fragmentShader), log);
 	}
 	
 	@Override

@@ -23,6 +23,11 @@
 			<artifactId>gdx</artifactId>
 			<version>${gdx.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>net.onedaybeard.artemis</groupId>
+			<artifactId>artemis-odb</artifactId>
+			<version>0.5.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 </project>

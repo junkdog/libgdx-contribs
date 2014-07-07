@@ -16,6 +16,9 @@
 
 package com.bitfire.postprocessing.effects;
 
+import javax.xml.ws.BindingType;
+
+import com.artemis.Component;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -29,10 +32,11 @@ import com.bitfire.postprocessing.filters.Threshold;
 import com.bitfire.postprocessing.utils.PingPongBuffer;
 
 public final class Bloom extends PostProcessorEffect<Bloom.Settings> {
-	public static class Settings implements EffectSettings{
+	public static class Settings extends Component implements EffectSettings {
 		public String name;
 
 		public BlurType blurType;
+		
 		public int blurPasses; // simple blur
 		public float blurAmount; // normal blur (1 pass)
 		public float bloomThreshold;
