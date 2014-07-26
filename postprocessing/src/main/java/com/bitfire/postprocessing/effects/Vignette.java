@@ -43,10 +43,10 @@ public final class Vignette extends PostProcessorEffect<Vignette.Settings> {
 		public Settings() {}
 	}
 	private Vignetting vignetting;
-	public boolean controlSaturation;
+	private boolean controlSaturation;
 	private float oneOnW, oneOnH;
 
-	public Vignette( int viewportWidth, int viewportHeight, boolean controlSaturation ) {
+	public Vignette (int viewportWidth, int viewportHeight, boolean controlSaturation) {
 		this( new Settings( viewportWidth, viewportHeight, controlSaturation ) );
 	}
 	
@@ -55,122 +55,126 @@ public final class Vignette extends PostProcessorEffect<Vignette.Settings> {
 		this.controlSaturation = settings.initControlSaturation;
 		oneOnW = 1f / (float)settings.initViewportWidth;
 		oneOnH = 1f / (float)settings.initViewportHeight;
-		vignetting = new Vignetting( controlSaturation );
+		vignetting = new Vignetting(controlSaturation);
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 		vignetting.dispose();
 	}
 
-	public void setIntensity( float intensity ) {
-		vignetting.setIntensity( intensity );
+	public boolean doesSaturationControl () {
+		return controlSaturation;
+	}
+
+	public void setIntensity (float intensity) {
+		vignetting.setIntensity(intensity);
 		settings.intensity = intensity;
 	}
 
-	public void setCoords( float x, float y ) {
-		vignetting.setCoords( x, y );
+	public void setCoords (float x, float y) {
+		vignetting.setCoords(x, y);
 		settings.x = x;
 		settings.y = y;
 	}
 
-	public void setX( float x ) {
-		vignetting.setX( x );
+	public void setX (float x) {
+		vignetting.setX(x);
 		settings.x = x;
 	}
 
-	public void setY( float y ) {
-		vignetting.setY( y );
+	public void setY (float y) {
+		vignetting.setY(y);
 		settings.y = y;
 	}
 
-	public void setSaturation( float saturation ) {
-		vignetting.setSaturation( saturation );
+	public void setSaturation (float saturation) {
+		vignetting.setSaturation(saturation);
 		settings.saturation = saturation;
 	}
 
-	public void setSaturationMul( float saturationMul ) {
-		vignetting.setSaturationMul( saturationMul );
+	public void setSaturationMul (float saturationMul) {
+		vignetting.setSaturationMul(saturationMul);
 		settings.saturationMultiplier = saturationMul;
 	}
 
-	public void setLutTexture( Texture texture ) {
-		vignetting.setLut( texture );
+	public void setLutTexture (Texture texture) {
+		vignetting.setLut(texture);
 	}
 
-	public void setLutIntensity( float value ) {
-		vignetting.setLutIntensity( value );
+	public void setLutIntensity (float value) {
+		vignetting.setLutIntensity(value);
 		settings.lutItensity = value;
 	}
 
-	public void setLutIndexVal( int index, int value ) {
-		vignetting.setLutIndexVal( index, value );
+	public void setLutIndexVal (int index, int value) {
+		vignetting.setLutIndexVal(index, value);
 	}
 
-	public void setLutIndexOffset( float value ) {
-		vignetting.setLutIndexOffset( value );
+	public void setLutIndexOffset (float value) {
+		vignetting.setLutIndexOffset(value);
 	}
 
 	/** Specify the center, in screen coordinates. */
-	public void setCenter( float x, float y ) {
-		vignetting.setCenter( x * oneOnW, 1f - y * oneOnH );
+	public void setCenter (float x, float y) {
+		vignetting.setCenter(x * oneOnW, 1f - y * oneOnH);
 		settings.screenCenterX = x;
 		settings.screenCenterY = y;
 	}
 
-	public float getIntensity() {
+	public float getIntensity () {
 		return vignetting.getIntensity();
 	}
 
-	public float getLutIntensity() {
+	public float getLutIntensity () {
 		return vignetting.getLutIntensity();
 	}
 
-	public int getLutIndexVal( int index ) {
-		return vignetting.getLutIndexVal( index );
+	public int getLutIndexVal (int index) {
+		return vignetting.getLutIndexVal(index);
 	}
 
-	public Texture getLut() {
+	public Texture getLut () {
 		return vignetting.getLut();
 	}
 
-	public float getCenterX() {
+	public float getCenterX () {
 		return vignetting.getCenterX();
 	}
 
-	public float getCenterY() {
+	public float getCenterY () {
 		return vignetting.getCenterY();
 	}
 
-	public float getCoordsX() {
+	public float getCoordsX () {
 		return vignetting.getX();
 	}
 
-	public float getCoordsY() {
+	public float getCoordsY () {
 		return vignetting.getY();
 	}
 
-	public float getSaturation() {
+	public float getSaturation () {
 		return vignetting.getSaturation();
 	}
 
-	public float getSaturationMul() {
+	public float getSaturationMul () {
 		return vignetting.getSaturationMul();
 	}
 
-	public boolean isGradientMappingEnabled() {
+	public boolean isGradientMappingEnabled () {
 		return vignetting.isGradientMappingEnabled();
 	}
 
 	@Override
-	public void rebind() {
+	public void rebind () {
 		vignetting.rebind();
 	}
 
 	@Override
-	public void render( FrameBuffer src, FrameBuffer dest ) {
-		restoreViewport( dest );
-		vignetting.setInput( src ).setOutput( dest ).render();
+	public void render (FrameBuffer src, FrameBuffer dest) {
+		restoreViewport(dest);
+		vignetting.setInput(src).setOutput(dest).render();
 	}
 
 	@Override

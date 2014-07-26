@@ -64,7 +64,6 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		config.samples = 0;
 		config.depth = 0;
 		config.vSyncEnabled = true;
-		config.useGL20 = true;
 		config.fullscreen = false;
 
 		new LwjglApplication( new PostProcessingDemo(), config );
@@ -192,7 +191,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 			post.disableBlending();
 		}
 
-		if( backgroundFirst || !willPostProcess || !ui.drawBackground) {
+		if( backgroundFirst || !willPostProcess || !ui.drawBackground ) {
 			Gdx.gl20.glClearColor( 0, 0, 0, 0 );
 			Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT );
 			if( backgroundFirst ) {

@@ -27,7 +27,7 @@ public final class Curvature extends PostProcessorEffect<Curvature.Settings> {
 	}
 	private RadialDistortion distort;
 
-	public Curvature() {
+	public Curvature () {
 		super( new Settings() );
 		distort = new RadialDistortion();
 		settings.distortion = distort.getDistortion();
@@ -40,37 +40,37 @@ public final class Curvature extends PostProcessorEffect<Curvature.Settings> {
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 		distort.dispose();
 	}
 
-	public void setDistortion( float distortion ) {
-		distort.setDistortion( distortion );
+	public void setDistortion (float distortion) {
+		distort.setDistortion(distortion);
 		settings.distortion = distortion;
 	}
 
-	public void setZoom( float zoom ) {
-		distort.setZoom( zoom );
+	public void setZoom (float zoom) {
+		distort.setZoom(zoom);
 		settings.zoom = zoom;
 	}
 
-	public float getDistortion() {
+	public float getDistortion () {
 		return distort.getDistortion();
 	}
 
-	public float getZoom() {
+	public float getZoom () {
 		return distort.getZoom();
 	}
 
 	@Override
-	public void rebind() {
+	public void rebind () {
 		distort.rebind();
 	}
 
 	@Override
-	public void render( FrameBuffer src, FrameBuffer dest ) {
-		restoreViewport( dest );
-		distort.setInput( src ).setOutput( dest ).render();
+	public void render (FrameBuffer src, FrameBuffer dest) {
+		restoreViewport(dest);
+		distort.setInput(src).setOutput(dest).render();
 	}
 
 	@Override

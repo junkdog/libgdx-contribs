@@ -27,6 +27,8 @@ import com.bitfire.postprocessing.effects.CrtMonitor;
 import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
+import com.bitfire.postprocessing.filters.Combine;
+import com.bitfire.postprocessing.filters.CrtScreen.Effect;
 import com.bitfire.postprocessing.filters.CrtScreen.RgbMode;
 import com.bitfire.postprocessing.filters.RadialBlur;
 
@@ -65,7 +67,14 @@ public final class PostProcessing implements Disposable, PostProcessorListener {
 		bloom = new Bloom( (int)(Gdx.graphics.getWidth() * 0.25f), (int)(Gdx.graphics.getHeight() * 0.25f) );
 		curvature = new Curvature();
 		zoomer = new Zoomer( vpW, vpH, isDesktop ? RadialBlur.Quality.VeryHigh : RadialBlur.Quality.Low );
-		crt = new CrtMonitor( vpW, vpH, false, false, RgbMode.ChromaticAberrations );
+		int effects = Effect.TweakContrast.v | Effect.PhosphorVibrance.v | Effect.Scanlines.v | Effect.Tint.v;
+		crt = new CrtMonitor( vpW, vpH, false, false, RgbMode.ChromaticAberrations, effects );
+		Combine combine = crt.getCombinePass();
+		combine.setSource1Intensity( 0f );
+		combine.setSource2Intensity( 1f );
+		combine.setSource1Saturation( 0f );
+		combine.setSource2Saturation( 1f );
+
 		vignette = new Vignette( vpW, vpH, false );
 
 		// add them to the postprocessor
