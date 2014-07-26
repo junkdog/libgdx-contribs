@@ -90,8 +90,6 @@ public final class Bloom extends PostProcessorEffect<Bloom.Settings> {
 	private Threshold threshold;
 	private Combine combine;
 
-	private Settings settings;
-
 	private boolean blending = false;
 	private int sfactor, dfactor;
 
@@ -165,6 +163,7 @@ public final class Bloom extends PostProcessorEffect<Bloom.Settings> {
 		settings.blurType = type;
 	}
 
+	@Override
 	public void refreshSettings() {
 		// setup threshold filter
 		setThreshold(settings.bloomThreshold);
