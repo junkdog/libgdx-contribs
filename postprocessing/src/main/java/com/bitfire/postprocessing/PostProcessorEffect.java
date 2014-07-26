@@ -59,7 +59,7 @@ public abstract class PostProcessorEffect<T extends EffectSettings> implements D
 	 * 
 	 * @param settings Updated settings.
 	 */
-	public final void setSettings( T settings ) {
+	public void setSettings( T settings ) {
 		this.settings = settings;
 		refreshSettings();
 	}

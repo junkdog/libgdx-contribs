@@ -31,19 +31,19 @@ import com.bitfire.postprocessing.filters.Combine;
 import com.bitfire.postprocessing.filters.Threshold;
 import com.bitfire.postprocessing.utils.PingPongBuffer;
 
-public final class Bloom extends PostProcessorEffect {
-	public static class Settings {
-		public final String name;
+public final class Bloom extends PostProcessorEffect<Bloom.Settings> {
+	public static class Settings implements EffectSettings {
+		public String name;
 
-		public final BlurType blurType;
-		public final int blurPasses; // simple blur
-		public final float blurAmount; // normal blur (1 pass)
-		public final float bloomThreshold;
+		public BlurType blurType;
+		public int blurPasses; // simple blur
+		public float blurAmount; // normal blur (1 pass)
+		public float bloomThreshold;
 
-		public final float bloomIntensity;
-		public final float bloomSaturation;
-		public final float baseIntensity;
-		public final float baseSaturation;
+		public float bloomIntensity;
+		public float bloomSaturation;
+		public float baseIntensity;
+		public float baseSaturation;
 
 		public Settings (String name, BlurType blurType, int blurPasses, float blurAmount, float bloomThreshold,
 			float baseIntensity, float baseSaturation, float bloomIntensity, float bloomSaturation) {
@@ -165,10 +165,7 @@ public final class Bloom extends PostProcessorEffect {
 		settings.blurType = type;
 	}
 
-	public void setSettings (Settings settings) {
 	public void refreshSettings() {
-		this.settings = settings;
-
 		// setup threshold filter
 		setThreshold(settings.bloomThreshold);
 
@@ -228,10 +225,6 @@ public final class Bloom extends PostProcessorEffect {
 
 	public BlurType getBlurType () {
 		return blur.getType();
-	}
-
-	public Settings getSettings () {
-		return settings;
 	}
 
 	public int getBlurPasses () {

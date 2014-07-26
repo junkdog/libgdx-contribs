@@ -68,6 +68,8 @@ public final class Zoomer extends PostProcessorEffect<Zoomer.Settings> {
 		if (radialQuality != null) {
 			radialBlur = new RadialBlur( radialQuality );
 		}
+		setup(viewportWidth, viewportHeight, radialBlur);
+	}
 		
 	private void setup (int viewportWidth, int viewportHeight, RadialBlur radialBlurFilter) {
 		radialBlur = radialBlurFilter;
